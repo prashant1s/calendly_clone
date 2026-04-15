@@ -11,44 +11,72 @@ const pool = new Pool({
     ssl: {rejectUnauthorized: false } 
 });
 
-const DEFAULT_USER_ID = 1;
+const DEFAULT_USER_EMAIL = 'admin@example.com';
+let defaultUserIdPromise = null;
+
+async function getDefaultUserId() {
+    if (!defaultUserIdPromise) {
+        defaultUserIdPromise = pool.query(
+            `INSERT INTO users (name, email)
+             VALUES ($1, $2)
+             ON CONFLICT (email) DO UPDATE SET name = EXCLUDED.name
+             RETURNING id`,
+            ['Admin User', DEFAULT_USER_EMAIL]
+        ).then(({ rows }) => rows[0].id)
+         .catch((error) => {
+            defaultUserIdPromise = null;
+            throw error;
+         });
+    }
+    return defaultUserIdPromise;
+}
 
 // --- Event Types API ---
 app.get('/api/event-types', async (req, res) => {
-    const { rows } = await pool.query('SELECT * FROM event_types WHERE user_id = $1', [DEFAULT_USER_ID]);
+    const userId = await getDefaultUserId();
+    const { rows } = await pool.query('SELECT * FROM event_types WHERE user_id = $1', [userId]);
     res.json(rows);
 });
 
 app.post('/api/event-types', async (req, res) => {
     const { title, duration, slug } = req.body;
     try {
+        const userId = await getDefaultUserId();
         const { rows } = await pool.query(
             'INSERT INTO event_types (user_id, title, duration, slug) VALUES ($1, $2, $3, $4) RETURNING *',
-            [DEFAULT_USER_ID, title, duration, slug]
+            [userId, title, duration, slug]
         );
         res.json(rows[0]);
-    } catch (err) { res.status(400).json({ error: 'Slug must be unique' }); }
+    } catch (err) {
+        if (err.code === '23505') {
+            return res.status(400).json({ error: 'Slug must be unique' });
+        }
+        return res.status(500).json({ error: 'Failed to save event type', details: err.message });
+    }
 });
 
 app.delete('/api/event-types/:id', async (req, res) => {
-    await pool.query('DELETE FROM event_types WHERE id = $1', [req.params.id]);
+    const userId = await getDefaultUserId();
+    await pool.query('DELETE FROM event_types WHERE id = $1 AND user_id = $2', [req.params.id, userId]);
     res.json({ success: true });
 });
 
 // --- Availability API ---
 app.get('/api/availability', async (req, res) => {
-    const { rows } = await pool.query('SELECT * FROM availabilities WHERE user_id = $1 ORDER BY day_of_week', [DEFAULT_USER_ID]);
+    const userId = await getDefaultUserId();
+    const { rows } = await pool.query('SELECT * FROM availabilities WHERE user_id = $1 ORDER BY day_of_week', [userId]);
     res.json(rows);
 });
 
 app.post('/api/availability', async (req, res) => {
     const { availabilities } = req.body; 
-    await pool.query('DELETE FROM availabilities WHERE user_id = $1', [DEFAULT_USER_ID]);
+    const userId = await getDefaultUserId();
+    await pool.query('DELETE FROM availabilities WHERE user_id = $1', [userId]);
     for (let av of availabilities) {
         if (av.active) {
             await pool.query(
                 'INSERT INTO availabilities (user_id, day_of_week, start_time, end_time) VALUES ($1, $2, $3, $4)',
-                [DEFAULT_USER_ID, av.day_of_week, av.start_time, av.end_time]
+                [userId, av.day_of_week, av.start_time, av.end_time]
             );
         }
     }
@@ -67,7 +95,8 @@ app.get('/api/slots/:slug', async (req, res) => {
 
     // Get Day Availability
     const dayOfWeek = new Date(date).getDay();
-    const avRes = await pool.query('SELECT * FROM availabilities WHERE user_id = $1 AND day_of_week = $2', [DEFAULT_USER_ID, dayOfWeek]);
+    const userId = await getDefaultUserId();
+    const avRes = await pool.query('SELECT * FROM availabilities WHERE user_id = $1 AND day_of_week = $2', [userId, dayOfWeek]);
     if (avRes.rows.length === 0) return res.json({ slots: [] }); // No availability this day
     
     const { start_time, end_time } = avRes.rows[0];

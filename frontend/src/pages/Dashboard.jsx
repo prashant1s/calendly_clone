@@ -44,7 +44,8 @@ export default function Dashboard() {
             fetchEvents().then(data => setEvents(data));
         } catch (error) {
             console.log(error);
-            alert('Error saving event. Make sure the URL slug is unique!');
+            const apiMessage = error?.response?.data?.error;
+            alert(apiMessage || 'Error saving event. Please try again.');
         }
     };
 
