@@ -3,6 +3,7 @@ const cors = require('cors');
 const { Pool } = require('pg');
 require('dotenv').config();
 const app = express();
+const api = express.Router();
 app.use(cors());
 app.use(express.json());
 
@@ -32,13 +33,13 @@ async function getDefaultUserId() {
 }
 
 // --- Event Types API ---
-app.get('/api/event-types', async (req, res) => {
+api.get('/event-types', async (req, res) => {
     const userId = await getDefaultUserId();
     const { rows } = await pool.query('SELECT * FROM event_types WHERE user_id = $1', [userId]);
     res.json(rows);
 });
 
-app.post('/api/event-types', async (req, res) => {
+api.post('/event-types', async (req, res) => {
     const { title, duration, slug } = req.body;
     try {
         const userId = await getDefaultUserId();
@@ -55,20 +56,20 @@ app.post('/api/event-types', async (req, res) => {
     }
 });
 
-app.delete('/api/event-types/:id', async (req, res) => {
+api.delete('/event-types/:id', async (req, res) => {
     const userId = await getDefaultUserId();
     await pool.query('DELETE FROM event_types WHERE id = $1 AND user_id = $2', [req.params.id, userId]);
     res.json({ success: true });
 });
 
 // --- Availability API ---
-app.get('/api/availability', async (req, res) => {
+api.get('/availability', async (req, res) => {
     const userId = await getDefaultUserId();
     const { rows } = await pool.query('SELECT * FROM availabilities WHERE user_id = $1 ORDER BY day_of_week', [userId]);
     res.json(rows);
 });
 
-app.post('/api/availability', async (req, res) => {
+api.post('/availability', async (req, res) => {
     const { availabilities } = req.body; 
     const userId = await getDefaultUserId();
     await pool.query('DELETE FROM availabilities WHERE user_id = $1', [userId]);
@@ -84,7 +85,7 @@ app.post('/api/availability', async (req, res) => {
 });
 
 // --- Booking & Slots API ---
-app.get('/api/slots/:slug', async (req, res) => {
+api.get('/slots/:slug', async (req, res) => {
     const { slug } = req.params;
     const { date } = req.query; // YYYY-MM-DD
     
@@ -131,7 +132,7 @@ app.get('/api/slots/:slug', async (req, res) => {
     res.json({ eventType, slots });
 });
 
-app.post('/api/bookings', async (req, res) => {
+api.post('/bookings', async (req, res) => {
     const { event_type_id, invitee_name, invitee_email, start_time } = req.body;
     
     const eventTypeRes = await pool.query('SELECT duration FROM event_types WHERE id = $1', [event_type_id]);
@@ -147,7 +148,7 @@ app.post('/api/bookings', async (req, res) => {
 });
 
 // --- Meetings API ---
-app.get('/api/meetings', async (req, res) => {
+api.get('/meetings', async (req, res) => {
     const { rows } = await pool.query(`
         SELECT b.*, e.title as event_title 
         FROM bookings b JOIN event_types e ON b.event_type_id = e.id 
@@ -156,9 +157,18 @@ app.get('/api/meetings', async (req, res) => {
     res.json(rows);
 });
 
-app.put('/api/meetings/:id/cancel', async (req, res) => {
+api.put('/meetings/:id/cancel', async (req, res) => {
     await pool.query('UPDATE bookings SET status = $1 WHERE id = $2', ['cancelled', req.params.id]);
     res.json({ success: true });
+});
+
+// Support both local legacy /api routes and service-mounted routes.
+app.use('/api', api);
+app.use('/', api);
+
+app.use((err, req, res, next) => {
+    console.error('API error:', err);
+    res.status(500).json({ error: 'Internal server error', details: err.message });
 });
 
 if (process.env.NODE_ENV !== 'production') {
