@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import API from '../api';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isBefore, isToday } from 'date-fns';
 import { Clock } from 'lucide-react';
@@ -46,6 +46,12 @@ export default function PublicBooking() {
                         <p className="font-semibold">{event.title}</p>
                         <p className="text-gray-600 flex items-center mt-2"><Clock size={16} className="mr-2"/> {format(new Date(selectedSlot), 'EEEE, MMMM d, yyyy @ h:mm a')}</p>
                     </div>
+                    <Link
+                        to="/"
+                        className="inline-block mt-6 bg-blue-600 text-white font-semibold px-6 py-2 rounded-full hover:bg-blue-700 transition-colors"
+                    >
+                        Home
+                    </Link>
                 </div>
             </div>
         );
