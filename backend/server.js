@@ -8,7 +8,7 @@ app.use(express.json());
 
 const pool = new Pool({
    connectionString: process.env.DATABASE_URL,
-    ssl: { require: true, rejectUnauthorized: false } 
+    ssl: {rejectUnauthorized: false } 
 });
 
 const DEFAULT_USER_ID = 1;
