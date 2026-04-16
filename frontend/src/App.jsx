@@ -14,18 +14,18 @@ function NavLink({ to, children, icon: Icon }) {
   return (
     <Link 
       to={to} 
-      className={`relative flex items-center px-6 py-3 text-sm font-semibold transition-all ${
-        isActive 
-          ? 'bg-blue-50 text-blue-600' 
-          : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+      className={`relative flex items-center gap-3 px-6 py-3 text-sm font-semibold transition-all ${
+        isActive
+          ? 'bg-white/5 text-white'
+          : 'text-gray-400 hover:bg-white/5 hover:text-white'
       }`}
     >
       {/* Active Indicator (Vertical line on the left) */}
       {isActive && (
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-600" />
+        <div className="absolute left-0 top-0 bottom-0 w-1 bg-fuchsia-500" />
       )}
       
-      {Icon && <Icon size={18} className="mr-3" />}
+      {Icon && <Icon size={18} className="shrink-0" />}
       {children}
     </Link>
   );
@@ -40,34 +40,38 @@ function App() {
         
         {/* Admin Routes with Vertical Sidebar */}
         <Route path="*" element={
-          <div className="min-h-screen flex bg-white">
+          <div className="min-h-screen flex bg-neutral-950 text-gray-100">
             
             {/* --- VERTICAL SIDEBAR --- */}
-            <aside className="w-64 border-r border-gray-200 bg-white flex flex-col sticky top-0 h-screen">
+            <aside className="w-72 border-r border-white/10 bg-neutral-950 flex flex-col sticky top-0 h-screen">
               
               {/* Logo Section */}
               <div className="p-6 mb-2">
-                <h1 className="text-2xl font-black text-blue-600 tracking-tight">Calendly</h1>
+                <h1 className="text-xl sm:text-2xl font-black tracking-tight">
+                  <span className="text-white">Cal</span>
+                  <span className="text-fuchsia-500">.clone</span>
+                </h1>
+                <p className="mt-1 text-xs text-gray-500 font-medium">Neon-powered scheduling</p>
               </div>
 
              
 
               {/* Navigation Links Stacking Vertically */}
               <nav className="flex-1 flex flex-col">
-                <NavLink to="/" icon={Calendar}>Event Types</NavLink>
-                <NavLink to="/meetings" icon={Clock}>Scheduled Events</NavLink>
+                <NavLink to="/" icon={Calendar}>Event types</NavLink>
+                <NavLink to="/meetings" icon={Clock}>Bookings</NavLink>
                 <NavLink to="/availability" icon={Settings}>Availability</NavLink>
               </nav>
 
               {/* Footer / Help (Optional) */}
-              <div className="p-6 border-t border-gray-100">
-                <p className="text-xs text-gray-400 font-medium uppercase tracking-widest">Calendly Clone v1.0</p>
+              <div className="p-6 border-t border-white/10">
+                <p className="text-xs text-gray-500 font-medium uppercase tracking-widest">Cal.clone</p>
               </div>
             </aside>
 
             {/* --- MAIN CONTENT AREA --- */}
-            <main className="flex-1 bg-gray-50/30 overflow-y-auto">
-              <div className="max-w-5xl mx-auto p-12">
+            <main className="flex-1 overflow-y-auto">
+              <div className="max-w-5xl mx-auto p-10 sm:p-12">
                 <Routes>
                   <Route path="/" element={<Dashboard />} />
                   <Route path="/availability" element={<Availability />} />
