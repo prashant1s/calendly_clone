@@ -75,12 +75,12 @@ export default function Dashboard() {
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
                             placeholder="Search"
-                            className="w-full bg-white/5 border border-white/10 rounded-full py-2.5 pl-9 pr-4 text-sm text-gray-200 placeholder:text-gray-500 outline-none focus:border-fuchsia-500"
+                            className="w-full bg-white/5 border border-white/10 rounded-full py-2.5 pl-9 pr-4 text-sm text-gray-200 placeholder:text-gray-500 outline-none focus:border-white"
                         />
                     </div>
                     <button
                         onClick={openNewModal}
-                        className="flex items-center justify-center gap-2 bg-fuchsia-500 text-black px-5 py-2.5 rounded-full font-semibold hover:bg-fuchsia-400 transition-colors"
+                        className="flex items-center justify-center gap-2 bg-white text-black px-5 py-2.5 rounded-full font-semibold hover:bg-white/90 transition-colors"
                     >
                         <Plus size={18} /> New
                     </button>
@@ -96,7 +96,7 @@ export default function Dashboard() {
                     {filteredEvents.map(ev => (
                         <div
                             key={ev.id}
-                            className="bg-white/5 border border-white/10 rounded-2xl p-5 flex flex-col hover:border-fuchsia-500/30 transition-colors"
+                            className="bg-white/5 border border-white/10 rounded-2xl p-5 flex flex-col hover:border-white/30 transition-colors"
                         >
                             <h3 className="text-lg font-semibold text-white mb-1">{ev.title}</h3>
                             <p className="text-gray-400 flex items-center mb-6">
@@ -107,7 +107,7 @@ export default function Dashboard() {
                                 <Link
                                     to={`/book/${ev.slug}`}
                                     target="_blank"
-                                    className="text-fuchsia-300 flex items-center text-sm font-medium hover:underline"
+                                    className="text-white flex items-center text-sm font-medium hover:underline"
                                 >
                                     <LinkIcon size={14} className="mr-1" /> View Booking Page
                                 </Link>
@@ -156,7 +156,7 @@ export default function Dashboard() {
                                     type="text"
                                     value={formData.title}
                                     onChange={e => setFormData({ ...formData, title: e.target.value })}
-                                    className="w-full bg-white/5 border border-white/10 rounded-md p-2 outline-none focus:border-fuchsia-500"
+                                        className="w-full bg-white/5 border border-white/10 rounded-md p-2 outline-none focus:border-white"
                                 />
                             </div>
                             <div>
@@ -167,7 +167,7 @@ export default function Dashboard() {
                                     min="1"
                                     value={formData.duration}
                                     onChange={e => setFormData({ ...formData, duration: parseInt(e.target.value) })}
-                                    className="w-full bg-white/5 border border-white/10 rounded-md p-2 outline-none focus:border-fuchsia-500"
+                                    className="w-full bg-white/5 border border-white/10 rounded-md p-2 outline-none focus:border-white"
                                 />
                             </div>
                             <div>
@@ -181,7 +181,7 @@ export default function Dashboard() {
                                         type="text"
                                         value={formData.slug}
                                         onChange={e => setFormData({ ...formData, slug: e.target.value })}
-                                        className="flex-1 min-w-0 block w-full bg-white/5 px-3 py-2 rounded-none rounded-r-md border border-white/10 outline-none focus:border-fuchsia-500"
+                                        className="flex-1 min-w-0 block w-full bg-white/5 px-3 py-2 rounded-none rounded-r-md border border-white/10 outline-none focus:border-white"
                                     />
                                 </div>
                             </div>
@@ -195,7 +195,7 @@ export default function Dashboard() {
                                 </button>
                                 <button
                                     type="submit"
-                                    className="px-4 py-2 text-sm font-medium text-black bg-fuchsia-500 rounded-full hover:bg-fuchsia-400"
+                                    className="px-4 py-2 text-sm font-medium text-black bg-white rounded-full hover:bg-white/90"
                                 >
                                     Save Event
                                 </button>

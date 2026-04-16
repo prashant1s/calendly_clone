@@ -62,6 +62,25 @@ api.delete('/event-types/:id', async (req, res) => {
     res.json({ success: true });
 });
 
+api.put('/event-types/:id', async (req, res) => {
+    const { title, duration, slug } = req.body;
+    try {
+        const userId = await getDefaultUserId();
+        const { rows } = await pool.query(
+            'UPDATE event_types SET title = $1, duration = $2, slug = $3 WHERE id = $4 AND user_id = $5 RETURNING *',
+            [title, duration, slug, req.params.id, userId]
+        );
+
+        if (rows.length === 0) return res.status(404).json({ error: 'Event not found' });
+        res.json(rows[0]);
+    } catch (err) {
+        if (err.code === '23505') {
+            return res.status(400).json({ error: 'Slug must be unique' });
+        }
+        return res.status(500).json({ error: 'Failed to update event type', details: err.message });
+    }
+});
+
 // --- Availability API ---
 api.get('/availability', async (req, res) => {
     const userId = await getDefaultUserId();

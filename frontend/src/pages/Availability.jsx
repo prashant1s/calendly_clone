@@ -14,7 +14,13 @@ export default function Availability() {
         const loadAvailability = async () => {
             const { data } = await API.get('/availability');
             if (data.length > 0) {
-                const newSchedule = [...schedule];
+                // Rebuild defaults inside the effect to avoid stale closures.
+                const newSchedule = DAYS.map((_, i) => ({
+                    day_of_week: i,
+                    active: false,
+                    start_time: '09:00',
+                    end_time: '17:00',
+                }));
                 data.forEach(d => {
                     newSchedule[d.day_of_week] = { ...d, active: true, start_time: d.start_time.substring(0, 5), end_time: d.end_time.substring(0, 5) };
                 });
@@ -53,7 +59,7 @@ export default function Availability() {
                 <select
                     value={timezone}
                     onChange={(e) => setTimezone(e.target.value)}
-                    className="flex-1 bg-neutral-950 border border-white/10 rounded-lg p-2.5 outline-none focus:border-fuchsia-500 text-sm text-gray-200"
+                    className="flex-1 bg-neutral-950 border border-white/10 rounded-lg p-2.5 outline-none focus:border-white text-sm text-gray-200"
                 >
                     <option value={Intl.DateTimeFormat().resolvedOptions().timeZone}>
                         {Intl.DateTimeFormat().resolvedOptions().timeZone} (Local)
@@ -86,7 +92,7 @@ export default function Availability() {
                                         }}
                                         className="sr-only peer"
                                     />
-                                    <span className="absolute inset-0 rounded-full bg-white/10 transition-colors peer-checked:bg-fuchsia-500" />
+                                    <span className="absolute inset-0 rounded-full bg-white/10 transition-colors peer-checked:bg-white" />
                                     <span className="absolute left-1 top-1 h-4 w-4 rounded-full bg-white transition-transform peer-checked:translate-x-5" />
                                 </label>
                                 <span className={`font-semibold ${isOn ? 'text-white' : 'text-gray-500'}`}>{DAYS[idx]}</span>

@@ -22,7 +22,7 @@ function NavLink({ to, children, icon: Icon }) {
     >
       {/* Active Indicator (Vertical line on the left) */}
       {isActive && (
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-fuchsia-500" />
+        <div className="absolute left-0 top-0 bottom-0 w-1 bg-white" />
       )}
       
       {Icon && <Icon size={18} className="shrink-0" />}
@@ -49,7 +49,7 @@ function App() {
               <div className="p-6 mb-2">
                 <h1 className="text-xl sm:text-2xl font-black tracking-tight">
                   <span className="text-white">Cal</span>
-                  <span className="text-fuchsia-500">.clone</span>
+                  <span className="text-white">.clone</span>
                 </h1>
                 <p className="mt-1 text-xs text-gray-500 font-medium">Neon-powered scheduling</p>
               </div>

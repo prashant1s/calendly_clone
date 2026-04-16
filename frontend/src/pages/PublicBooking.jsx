@@ -48,7 +48,7 @@ export default function PublicBooking() {
                     </div>
                     <Link
                         to="/"
-                        className="inline-block mt-6 bg-fuchsia-500 text-black font-semibold px-6 py-2 rounded-full hover:bg-fuchsia-400 transition-colors"
+                        className="inline-block mt-6 bg-white text-black font-semibold px-6 py-2 rounded-full hover:bg-white/90 transition-colors"
                     >
                         Home
                     </Link>
@@ -66,7 +66,7 @@ export default function PublicBooking() {
                     <h3 className="text-gray-400 font-semibold mb-2">Admin User</h3>
                     <h1 className="text-2xl font-bold text-white mb-4">{event.title}</h1>
                     <p className="text-gray-400 flex items-center"><Clock size={18} className="mr-2"/> {event.duration} min</p>
-                    {selectedDate && <p className="mt-4 text-fuchsia-300 font-medium">{format(selectedDate, 'EEEE, MMMM d')}</p>}
+                    {selectedDate && <p className="mt-4 text-white font-medium">{format(selectedDate, 'EEEE, MMMM d')}</p>}
                     {selectedSlot && <p className="text-gray-300">{format(new Date(selectedSlot), 'h:mm a')}</p>}
                 </div>
 
@@ -90,8 +90,8 @@ export default function PublicBooking() {
                                                 onClick={() => setSelectedDate(day)}
                                                 style={i === 0 ? { gridColumnStart: day.getDay() + 1 } : {}}
                                                 className={`p-2 rounded-full w-10 h-10 mx-auto flex items-center justify-center text-sm font-semibold transition-colors
-                                                    ${disabled ? 'text-gray-600 cursor-not-allowed' : 'text-fuchsia-200 bg-white/5 hover:bg-white/10'}
-                                                    ${isSelected ? 'bg-fuchsia-500 text-black hover:bg-fuchsia-400' : ''}
+                                                    ${disabled ? 'text-gray-600 cursor-not-allowed' : 'text-white bg-white/5 hover:bg-white/10'}
+                                                    ${isSelected ? 'bg-white text-black hover:bg-white/90' : ''}
                                                 `}>
                                                 {format(day, 'd')}
                                             </button>
@@ -105,7 +105,7 @@ export default function PublicBooking() {
                                     <button 
                                         key={slot} 
                                         onClick={() => setSelectedSlot(slot)}
-                                        className="w-full mb-3 py-3 border border-white/10 text-fuchsia-200 font-bold rounded hover:border-fuchsia-400 hover:text-fuchsia-100 transition-colors bg-white/5">
+                                        className="w-full mb-3 py-3 border border-white/10 text-white font-bold rounded hover:border-white/90 hover:text-white transition-colors bg-white/5">
                                         {format(new Date(slot), 'h:mm a')}
                                     </button>
                                 ))}
@@ -121,7 +121,7 @@ export default function PublicBooking() {
                                     type="text"
                                     value={form.name}
                                     onChange={e => setForm({ ...form, name: e.target.value })}
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl p-3 outline-none focus:border-fuchsia-500"
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl p-3 outline-none focus:border-white"
                                 />
                             </div>
                             <div className="mb-6">
@@ -131,10 +131,10 @@ export default function PublicBooking() {
                                     type="email"
                                     value={form.email}
                                     onChange={e => setForm({ ...form, email: e.target.value })}
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl p-3 outline-none focus:border-fuchsia-500"
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl p-3 outline-none focus:border-white"
                                 />
                             </div>
-                            <button type="submit" className="bg-fuchsia-500 text-black font-bold py-3 px-6 rounded-full hover:bg-fuchsia-400 transition-colors">
+                            <button type="submit" className="bg-white text-black font-bold py-3 px-6 rounded-full hover:bg-white/90 transition-colors">
                                 Schedule Event
                             </button>
                             <button type="button" onClick={() => setSelectedSlot(null)} className="ml-4 text-gray-400 hover:text-gray-200">
